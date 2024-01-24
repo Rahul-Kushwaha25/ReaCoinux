@@ -20,13 +20,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.rahul.titan.reacoinux.Models.CryptoCurrency
 import com.rahul.titan.reacoinux.Retrofit.retrofit_instance
+import com.rahul.titan.reacoinux.Screens.Gainersscreen
+import com.rahul.titan.reacoinux.Screens.Loserscreen
 import com.rahul.titan.reacoinux.Screens.Mainscreen
 import com.rahul.titan.reacoinux.ui.theme.ReaCoinuxTheme
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.internal.immutableListOf
 import okio.IOException
 import retrofit2.HttpException
 
@@ -40,48 +41,59 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    var cryptolist by remember{
-                       //immutableListOf<CryptoCurrency>()
+                    var cryptolist by remember {
+                        //immutableListOf<CryptoCurrency>()
                         mutableStateOf(listOf<CryptoCurrency>())
                     }
                     val navController = rememberNavController()
 
-                    NavHost(navController = navController, startDestination = "Mainscreen"){
-                        composable("Mainscreen"){
-                            Mainscreen(navController,cryptolist)
+                    NavHost(navController = navController, startDestination = "Mainscreen") {
+                        composable("Mainscreen") {
+                            Mainscreen(navController, cryptolist)
+                        }
+                        composable("Gainersscreen") {
+                            Gainersscreen(navController, cryptolist)
+                        }
+                        composable("Loserscreen") {
+                            Loserscreen(navController, cryptolist)
                         }
                     }
 
 
-
                     val scope = rememberCoroutineScope()
 
-                    LaunchedEffect(key1 = true ){
-                        val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+                    LaunchedEffect(key1 = true) {
+                        val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
                             throwable.printStackTrace()
                         }
-                        scope.launch(Dispatchers.IO + coroutineExceptionHandler){
+                        scope.launch(Dispatchers.IO + coroutineExceptionHandler) {
 
                             Log.d("shriram", "onCreate: calling")
                             val response = try {
                                 retrofit_instance.api.getlisting()
 
-                            }catch (e : IOException){
+                            } catch (e: IOException) {
                                 Log.d("shriram", "onCreate: IO EXECPTION")
-                                Toast.makeText(this@MainActivity,"error in IO",Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@MainActivity, "error in IO", Toast.LENGTH_LONG)
+                                    .show()
                                 return@launch
-                            }catch (e : HttpException){
+                            } catch (e: HttpException) {
                                 Log.d("shriram", "onCreate: HTTP EXECPTION")
-                                Toast.makeText(this@MainActivity,"error in Http",Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "error in Http",
+                                    Toast.LENGTH_LONG
+                                ).show()
                                 return@launch
                             }
 
 
-                            if (response.isSuccessful && response.body() != null){
-                                withContext(Dispatchers.Main){
-                                   cryptolist = response.body()!!.data.cryptoCurrencyList
+                            if (response.isSuccessful && response.body() != null) {
+                                withContext(Dispatchers.Main) {
+                                    cryptolist = response.body()!!.data.cryptoCurrencyList
                                 }
-                                val name = response.body()!!.data.cryptoCurrencyList.firstOrNull { it.id == 1 }
+                                val name =
+                                    response.body()!!.data.cryptoCurrencyList.firstOrNull { it.id == 1 }
                                 val namemain = cryptolist.firstOrNull { it.id == 1 }
                                 if (name != null) {
                                     Log.d("titanji", "api data: ${name}")

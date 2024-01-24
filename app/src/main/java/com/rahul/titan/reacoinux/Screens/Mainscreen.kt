@@ -73,16 +73,20 @@ fun Mainscreen(
             )
             Row(modifier.fillMaxWidth(), Arrangement.SpaceEvenly) {
                 OutlinedButton(
-                    onClick = {},
+                    onClick = {
+                       navController.navigate("Gainersscreen")
+                    },
                     border = BorderStroke(2.dp, green)
                 ) {
                     Text(text = "Gainers", textAlign = TextAlign.Center, color = green)
                 }
                 OutlinedButton(
-                    onClick = {},
+                    onClick = {
+                              navController.navigate("Loserscreen")
+                    },
                     border = BorderStroke(2.dp, red)
                 ) {
-                    Text(text = "Losser", textAlign = TextAlign.Center, color = red)
+                    Text(text = "Losers", textAlign = TextAlign.Center, color = red)
                 }
 
 
